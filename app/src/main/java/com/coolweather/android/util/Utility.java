@@ -1,19 +1,24 @@
 package com.coolweather.android.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.gson.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by shizhengui on 2017/11/7.
- */
+import static android.content.ContentValues.TAG;
 
+
+/**
+ * 地点解析工具类
+ */
 public class Utility {
 
     public static boolean handleProvinceRequest(String request){
@@ -75,4 +80,16 @@ public class Utility {
         return false;
     }
 
+    public static Weather handleWeatherResponse(String reponse){
+        try {
+            JSONObject jsonObject = new JSONObject(reponse);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            Log.e(TAG, "handleWeatherResponse: " + weatherContent);
+            return new Gson().fromJson(weatherContent,Weather.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
